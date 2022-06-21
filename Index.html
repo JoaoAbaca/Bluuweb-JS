@@ -11,7 +11,31 @@
 </head>
 
 <body>
+    <form id="formulario" novalidate>
+        <input clas="form-control mb-2"
+        name="userName"
+        placeholder="Ingrese Su Nombre"
+        autocomplete="off"
+        id="UserName"
+        type="text"
+        value="Nombre"
+        />
+        <p class="text-danger mb-2 d-none" id="alertName"></p>
 
+        <input clas="form-control mb-2"
+        name="userEmail"
+        placeholder="Ingrese Correo"
+        autocomplete="off"
+        id="UserEmail"
+        type="text"
+        value="Correo"
+        />
+        <p class="text-danger mb-2 d-none" id="alertEmail"></p>
+
+        <button class="btn-btn-primary" type="submit">Enviar</button>
+        
+        <div class="alert alert-success my-2 d-none" id="alertSuccess"></div>
+    </form>
 
     <script src="app.js"></script>
 </body>
