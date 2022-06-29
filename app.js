@@ -1,46 +1,64 @@
-document.addEventListener("DOMContentLoaded", () => {
-    fetchData();
+const formulario = document.querySelector('#formulario');
+const pintarTodoHTML = document.querySelector('#pintarTodo');
+const templateTodo= document.querySelector('#templateTodo').content;
+const alert = document.querySelector('.alert');
+
+let todos = [];
+
+formulario.addEventListener('submit', e => {
+    e.preventDefault();
+    alert.classList.add('d-none');
+    const data = new FormData(formulario);
+    const [todo] = [...data.values()];
+    
+    if(!todo.trim()){
+        alert.classList.remove('d-none');
+        return;
+    }
+    agregarTodo(todo);
+    pintarTodo()
 });
 
-const cards = document.querySelector("#card-dinamica");
-const templateCard = document.querySelector("#template-card").content;
+const agregarTodo = (todo) => {
+    const objetoTodo = {
+        nombre: todo,
+        id: `${Date.now()}`
+    };
 
-const fetchData = async () => {
-    try {
-        loadingData(true);
+    todos.push(objetoTodo);
+}
 
-        const res = await fetch("https://rickandmortyapi.com/api/character");
-        const data = await res.json();
+const pintarTodo = () => {
 
-        pintarDatos(data);
-    } catch (error) {
-        console.log(error);
-    } finally {
-        loadingData(false);
-    }
-};
+    localStorage.setItem('todos', JSON.stringify(todos));
 
-const loadingData = (estado) => {
-    const loading = document.querySelector("#loading");
-    if (estado) {
-        loading.classList.remove("d-none");
-    } else {
-        loading.classList.add("d-none");
-    }
-};
-
-const pintarDatos = (data) => {
+    pintarTodoHTML.textContent = "";
     const fragment = document.createDocumentFragment();
 
-    cards.textContent = "";
+    todos.forEach(item => {
+        const clone= templateTodo.cloneNode(true);
+        clone.querySelector(".lead").textContent = item.nombre;
 
-    data.results.forEach((item) => {
-        const clone = templateCard.cloneNode(true);
-        clone.querySelector("h5").textContent = item.name;
-        clone.querySelector("p").textContent = item.species;
-        clone.querySelector("img").setAttribute("src", item.image);
+        clone.querySelector(".btn").dataset.id = item.id;
 
         fragment.appendChild(clone);
-    });
-    cards.appendChild(fragment);
-};
+    })
+
+    pintarTodoHTML.appendChild(fragment);
+}
+
+document.addEventListener('click', e => {
+    
+    if (e.target.matches(".btn-danger")){
+        todos = todos.filter(item => item.id !== e.target.dataset.id);
+        pintarTodo();
+    }
+})
+
+document.addEventListener('DOMContentLoaded', (e) =>{
+    if(localStorage.getItem('todos')) {
+        todos = JSON.parse(localStorage.getItem('todos'))
+        pintarTodo();
+    }
+    
+});
